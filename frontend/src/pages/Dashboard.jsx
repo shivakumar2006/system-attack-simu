@@ -1,4 +1,9 @@
 import { useState } from "react";
+import { CiUser } from "react-icons/ci";
+import { useNavigate } from "react-router-dom";
+import { setUser } from "../redux/api/AuthSlice";
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 
 /* ---------------- MOCK DATA (replace with backend later) ---------------- */
 
@@ -22,6 +27,14 @@ const mockLogs = [
 export default function AttackDashboard() {
     const [attackRunning, setAttackRunning] = useState(false);
 
+    const navigate = useNavigate();
+
+    const dispatch = useDispatch();
+
+    const user = useSelector((state) => state.auth.user);
+
+    console.log("user data : ", user);
+
     return (
         <div className="min-h-screen bg-gray-100 text-gray-900">
 
@@ -32,14 +45,19 @@ export default function AttackDashboard() {
                     <p className="text-xs text-gray-400">Auth • Control • Impact</p>
                 </div>
 
-                <div className="flex gap-6 text-sm">
-                    <Status label="User" value="admin@system" />
+                <div className="flex gap-6 text-sm item-center justify-center">
+                    <Status label="User" value={user?.email || "Guest"} />
                     <Status label="Victim" value="ALIVE" green />
                     <Status
                         label="Attack"
                         value={attackRunning ? "RUNNING" : "IDLE"}
                         red={attackRunning}
                     />
+                    <div
+                        onClick={() => navigate("/profile")}
+                        className="w-12 h-12 rounded-full flex justify-center items-center cursor-pointer bg-gray-200 hover:scale-105 duration-300 transition-transform">
+                        <CiUser className="text-3xl" />
+                    </div>
                 </div>
             </div>
 

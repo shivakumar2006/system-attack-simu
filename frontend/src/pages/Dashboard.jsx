@@ -4,34 +4,60 @@ import { useNavigate } from "react-router-dom";
 import { setUser } from "../redux/api/AuthSlice";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-
-/* ---------------- MOCK DATA (replace with backend later) ---------------- */
-
-const mockMetrics = {
-    total: 1280,
-    success: 910,
-    failure: 370,
-};
-
-const mockLogs = [
-    "ATTACK x100 initiated",
-    "Victim responded 200",
-    "Victim crashed 500",
-    "Retry triggered",
-    "Circuit breaker OPEN",
-    "System recovering",
-];
+import { useAttackMutation } from "../redux/api/AttackApi";
 
 /* ---------------- DASHBOARD ---------------- */
 
 export default function AttackDashboard() {
     const [attackRunning, setAttackRunning] = useState(false);
-
     const navigate = useNavigate();
-
     const dispatch = useDispatch();
 
+
+    const [attack] = useAttackMutation();
     const user = useSelector((state) => state.auth.user);
+
+    const [metrics, setMetrics] = useState({
+        total: 0,
+        success: 0,
+        failure: 0,
+    })
+    const [logs, setLogs] = useState([]);
+
+
+    const runAttack = async (count) => {
+        setAttackRunning(true);
+
+        try {
+            const res = await attack({
+                target: "http://localhost:8081/hit",
+                total: count,
+                workers: 10,
+            }).unwrap();
+
+            setMetrics({
+                total: res.total,
+                success: res.success,
+                failure: res.failure,
+            })
+
+            setLogs((prev) => [
+                `[${new Date().toLocaleTimeString()}] ATTACK x${count} started`,
+                ...prev,
+            ]);
+
+            setLogs((prev) => [
+                `[${new Date().toLocaleTimeString()}] Attack finished`,
+                `[${new Date().toLocaleTimeString()}] Success: ${res.success}`,
+                `[${new Date().toLocaleTimeString()}] Failure: ${res.failure}`,
+                ...prev,
+            ]);
+        } catch (error) {
+            alert("attack failed", error);
+        } finally {
+            setAttackRunning(false);
+        }
+    }
 
     console.log("user data : ", user);
 
@@ -70,11 +96,11 @@ export default function AttackDashboard() {
                 <div className="flex gap-4">
                     <ControlButton
                         label="⚡ ATTACK x100"
-                        onClick={() => setAttackRunning(true)}
+                        onClick={() => runAttack(100)}
                     />
                     <ControlButton
                         label="💣 ATTACK x1000"
-                        onClick={() => setAttackRunning(true)}
+                        onClick={() => runAttack(1000)}
                     />
                     <ControlButton
                         label="🛑 STOP ATTACK"
@@ -91,9 +117,9 @@ export default function AttackDashboard() {
                 </h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <Metric title="TOTAL REQUESTS" value={mockMetrics.total} />
-                    <Metric title="SUCCESS" value={mockMetrics.success} green />
-                    <Metric title="FAILURES" value={mockMetrics.failure} red />
+                    <Metric title="TOTAL REQUESTS" value={metrics.total} />
+                    <Metric title="SUCCESS" value={metrics.success} green />
+                    <Metric title="FAILURES" value={metrics.failure} red />
                 </div>
             </section>
 
@@ -115,8 +141,8 @@ export default function AttackDashboard() {
                 </h2>
 
                 <div className="bg-black text-green-400 font-mono text-xs rounded-lg p-4 h-40 overflow-y-auto">
-                    {mockLogs.map((log, i) => (
-                        <div key={i}>[{new Date().toLocaleTimeString()}] {log}</div>
+                    {logs.map((log, i) => (
+                        <div key={i}>{log}</div>
                     ))}
                 </div>
             </section>

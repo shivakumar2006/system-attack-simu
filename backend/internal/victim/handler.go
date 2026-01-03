@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func Handler(w http.ResponseWriter, r *http.Request) {
+func Handle(w http.ResponseWriter, r *http.Request) {
 	// random latency
 	time.Sleep(time.Duration(rand.Intn(400)) * time.Millisecond)
 
@@ -16,5 +16,5 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Write([]byte("😤 Victim crashed"))
+	w.Write([]byte("😤 Victim survived"))
 }

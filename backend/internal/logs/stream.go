@@ -1,7 +1,7 @@
 package logs
 
 import (
-	"internal/events"
+	"backend/internal/events"
 	"log"
 )
 

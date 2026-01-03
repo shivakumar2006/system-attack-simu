@@ -1,13 +1,11 @@
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 export default function Profile() {
     const navigate = useNavigate();
+    const user = useSelector((state) => state.auth.user);
 
-    // normally ye data /me API se aayega
-    const user = {
-        name: "Admin User",
-        email: "admin@system.com",
-    };
+    console.log("user data: ", user);
 
     const handleLogout = () => {
         localStorage.removeItem("token");
@@ -24,8 +22,8 @@ export default function Profile() {
 
                 {/* USER INFO */}
                 <div className="space-y-4 mb-8">
-                    <ProfileField label="Name" value={user.name} />
-                    <ProfileField label="Email" value={user.email} />
+                    <ProfileField label="Name" value={user?.name} />
+                    <ProfileField label="Email" value={user?.email} />
                 </div>
 
                 {/* ACTION */}

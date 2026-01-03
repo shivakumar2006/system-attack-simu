@@ -1,0 +1,20 @@
+package events
+
+import (
+	"math/rand"
+	"net/http"
+	"time"
+)
+
+func Handle(w http.ResponseWriter, r *http.Request) {
+	// random latency
+	time.Sleep(time.Duration(rand.Intn(400)) * time.Millisecond)
+
+	// random crash
+	if rand.Intn(100) < 5 {
+		http.Error(w, "💀 Victim crashed", http.StatusInternalServerError)
+		return
+	}
+
+	w.Write([]byte("😤 Victim crashed"))
+}

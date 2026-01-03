@@ -3,9 +3,9 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const AuthApi = createApi({
     reducerPath: "authApi",
     baseQuery: fetchBaseQuery({
-        baseurl: "http://localhost:8080",
+        baseUrl: "http://localhost:8080",
         prepareHeaders: (headers, { getState }) => {
-            const token = getState().auth.token;
+            const token = getState().auth?.token;
             if (token) {
                 headers.set("Authorization", `Bearer ${token}`);
             }
@@ -38,7 +38,7 @@ export const AuthApi = createApi({
         }),
 
         resetPassword: builder.mutation({
-            query: (token, new_password) => ({
+            query: ({ token, new_password }) => ({
                 url: "/reset-password",
                 method: "POST",
                 body: { token, new_password }

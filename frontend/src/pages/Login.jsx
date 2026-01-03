@@ -1,7 +1,42 @@
-import React from 'react';
-
+import React, { useState } from 'react';
+import { useLoginMutation } from '../redux/api/AuthApi';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { setUser } from '../redux/api/AuthSlice';
 
 const Login = () => {
+
+    const navigate = useNavigate()
+
+    const dispatch = useDispatch();
+
+    const [login, { isLoading, isError }] = useLoginMutation();
+
+    const [formData, setFormData] = useState({
+        email: "",
+        password: "",
+    });
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+
+        setFormData({
+            ...formData,
+            [name]: value,
+        })
+    };
+
+    const handleLogin = async () => {
+        try {
+            const response = await login(formData).unwrap();
+            dispatch(setUser(response))
+            navigate("/dashboard");
+            alert("login successfull");
+        } catch (error) {
+            alert("login failed : ", error);
+        }
+    }
+
     return (
         <div className="min-h-screen bg-[#F7F7F8] flex items-center justify-center px-6">
             <div className="w-full max-w-md">

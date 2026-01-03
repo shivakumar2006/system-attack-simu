@@ -1,4 +1,4 @@
-package events
+package victim
 
 import (
 	"math/rand"
@@ -6,12 +6,12 @@ import (
 	"time"
 )
 
-func Handle(w http.ResponseWriter, r *http.Request) {
+func Handler(w http.ResponseWriter, r *http.Request) {
 	// random latency
 	time.Sleep(time.Duration(rand.Intn(400)) * time.Millisecond)
 
 	// random crash
-	if rand.Intn(100) < 5 {
+	if rand.Intn(100) < 30 {
 		http.Error(w, "💀 Victim crashed", http.StatusInternalServerError)
 		return
 	}

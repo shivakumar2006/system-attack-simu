@@ -19,19 +19,6 @@ import {
 
 /* ---------------- DASHBOARD ---------------- */
 
-const lineData = [
-    { time: "10:00", success: 20, failure: 5 },
-    { time: "10:01", success: 15, failure: 8 },
-    { time: "10:02", success: 50, failure: 21 },
-    { time: "10:03", success: 43, failure: 12 },
-];
-
-const pie
-
-const pieData = [
-    { name: "Success", value: metrics.success }
-]
-
 export default function AttackDashboard() {
     const [attackRunning, setAttackRunning] = useState(false);
     const navigate = useNavigate();
@@ -82,6 +69,20 @@ export default function AttackDashboard() {
             setAttackRunning(false);
         }
     }
+
+    const lineData = [
+        { time: new Date().toLocaleTimeString(), success: metrics.success, failure: metrics.failure },
+        { time: new Date().toLocaleTimeString(), success: metrics.success, failure: metrics.failure },
+        { time: new Date().toLocaleTimeString(), success: metrics.success, failure: metrics.failure },
+        { time: new Date().toLocaleTimeString(), success: metrics.success, failure: metrics.failure },
+    ];
+
+    const pieColors = ["#16a34a", "#dc2626"];
+
+    const getPieData = () => [
+        { name: "Success", value: metrics.success },
+        { name: "Failure", value: metrics.failure },
+    ]
 
     console.log("user data : ", user);
 
@@ -149,14 +150,73 @@ export default function AttackDashboard() {
 
             {/* ================= BEHAVIOR (CHART PLACEHOLDER) ================= */}
             <section className="px-8 py-8 bg-white border-t border-gray-200">
-                <h2 className="text-sm font-semibold text-gray-500 mb-4">
+                <h2 className="text-sm font-semibold text-gray-500 mb-6">
                     SYSTEM BEHAVIOR
                 </h2>
 
-                <div className="h-48 flex items-center justify-center border border-dashed rounded-lg text-gray-400">
-                    📈 Line / Pie charts will live here
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+                    {/* -------- LINE CHART -------- */}
+                    <div className="border border-gray-200 rounded-xl p-6">
+                        <p className="text-xs tracking-widest text-gray-400 mb-4">
+                            REQUESTS OVER TIME
+                        </p>
+
+                        <ResponsiveContainer width="100%" height={240}>
+                            <LineChart data={lineData}>
+                                <XAxis dataKey="time" stroke="#9ca3af" />
+                                <YAxis stroke="#9ca3af" />
+                                <Tooltip />
+                                <Line
+                                    type="monotone"
+                                    dataKey="success"
+                                    stroke="#16a34a"
+                                    strokeWidth={3}
+                                    dot={false}
+                                />
+                                <Line
+                                    type="monotone"
+                                    dataKey="failure"
+                                    stroke="#dc2626"
+                                    strokeWidth={3}
+                                    dot={false}
+                                />
+                            </LineChart>
+                        </ResponsiveContainer>
+                    </div>
+
+                    {/* -------- PIE CHART -------- */}
+                    <div className="border border-gray-200 rounded-xl p-6">
+                        <p className="text-xs tracking-widest text-gray-400 mb-4">
+                            REQUEST DISTRIBUTION
+                        </p>
+
+                        <ResponsiveContainer width="100%" height={240}>
+                            <PieChart>
+                                <Pie
+                                    data={getPieData(metrics)}
+                                    dataKey="value"
+                                    nameKey="name"
+                                    innerRadius={60}
+                                    outerRadius={90}
+                                >
+                                    {getPieData(metrics).map((_, index) => (
+                                        <Cell key={index} fill={pieColors[index]} />
+                                    ))}
+                                </Pie>
+                                <Tooltip />
+                            </PieChart>
+                        </ResponsiveContainer>
+
+                        <div className="flex justify-around text-sm mt-4">
+                            <span className="text-green-600">● Success</span>
+                            <span className="text-red-600">● Failure</span>
+                        </div>
+                    </div>
+
                 </div>
             </section>
+
 
             {/* ================= LIVE EVENTS ================= */}
             <section className="px-8 py-8">

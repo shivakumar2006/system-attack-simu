@@ -5,8 +5,32 @@ import { setUser } from "../redux/api/AuthSlice";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { useAttackMutation } from "../redux/api/AttackApi";
+import {
+    LineChart,
+    Line,
+    XAxis,
+    YAxis,
+    Tooltip,
+    ResponsiveContainer,
+    PieChart,
+    Pie,
+    Cell,
+} from "recharts";
 
 /* ---------------- DASHBOARD ---------------- */
+
+const lineData = [
+    { time: "10:00", success: 20, failure: 5 },
+    { time: "10:01", success: 15, failure: 8 },
+    { time: "10:02", success: 50, failure: 21 },
+    { time: "10:03", success: 43, failure: 12 },
+];
+
+const pie
+
+const pieData = [
+    { name: "Success", value: metrics.success }
+]
 
 export default function AttackDashboard() {
     const [attackRunning, setAttackRunning] = useState(false);

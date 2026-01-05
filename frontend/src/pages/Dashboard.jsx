@@ -16,11 +16,16 @@ import {
     Pie,
     Cell,
 } from "recharts";
+import { AiFillThunderbolt } from "react-icons/ai";
+import { FaBomb } from "react-icons/fa";
+import { FaFire } from "react-icons/fa6";
+import { GiChoppedSkull } from "react-icons/gi";
 
 /* ---------------- DASHBOARD ---------------- */
 
 export default function AttackDashboard() {
     const [attackRunning, setAttackRunning] = useState(false);
+    const [lineData, setLineData] = useState([]);
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
@@ -52,6 +57,17 @@ export default function AttackDashboard() {
                 failure: res.failure,
             })
 
+            const timeStamp = new Date().toLocaleTimeString();
+
+            setLineData((prev) => [
+                ...prev.slice(-9),
+                {
+                    time: timeStamp,
+                    success: res.success,
+                    failure: res.failure,
+                }
+            ])
+
             setLogs((prev) => [
                 `[${new Date().toLocaleTimeString()}] ATTACK x${count} started`,
                 ...prev,
@@ -70,19 +86,21 @@ export default function AttackDashboard() {
         }
     }
 
-    const lineData = [
-        { time: new Date().toLocaleTimeString(), success: metrics.success, failure: metrics.failure },
-        { time: new Date().toLocaleTimeString(), success: metrics.success, failure: metrics.failure },
-        { time: new Date().toLocaleTimeString(), success: metrics.success, failure: metrics.failure },
-        { time: new Date().toLocaleTimeString(), success: metrics.success, failure: metrics.failure },
-    ];
-
     const pieColors = ["#16a34a", "#dc2626"];
 
     const getPieData = () => [
         { name: "Success", value: metrics.success },
         { name: "Failure", value: metrics.failure },
-    ]
+    ];
+
+    // const attackLevels = [
+    //     { label: `${<AiFillThunderbolt />}Attack x100`, count: 100, type: "safe" },
+    //     { label: `${<FaBomb />}Attack x1K`, count: 1000, type: "safe" },
+    //     { label: `${<FaFire />}Attack x5K`, count: 5000, type: "stress" },
+    //     { label: `${<FaFire />}ATTACK x15K`, count: 15000, type: "stress" },
+
+    //     { label: "☠️ ATTACK x25K", count: 25000, type: "danger" },
+    // ]
 
     console.log("user data : ", user);
 
@@ -118,14 +136,32 @@ export default function AttackDashboard() {
                     CONTROL PANEL
                 </h2>
 
-                <div className="flex gap-4">
+                <div className="flex flex-wrap gap-4">
                     <ControlButton
-                        label="⚡ ATTACK x100"
+                        label={<AiFillThunderbolt />}
+                        text="ATTACK x100"
                         onClick={() => runAttack(100)}
                     />
                     <ControlButton
-                        label="💣 ATTACK x1000"
+                        label={<FaBomb />}
+                        text="ATTACK x1000"
                         onClick={() => runAttack(1000)}
+                    />
+                    <ControlButton
+                        label={<FaFire />}
+                        text="ATTACK x5000"
+                        onClick={() => runAttack(5000)}
+                    />
+                    <ControlButton
+                        label={<FaFire />}
+                        text="ATTACK x15000"
+                        onClick={() => runAttack(15000)}
+                    />
+                    <ControlButton
+                        label={<GiChoppedSkull />}
+                        text="ATTACK x25000"
+                        danger
+                        onClick={() => runAttack(25000)}
                     />
                     <ControlButton
                         label="🛑 STOP ATTACK"
@@ -250,16 +286,16 @@ function Status({ label, value, green, red }) {
     );
 }
 
-function ControlButton({ label, onClick, danger }) {
+function ControlButton({ label, onClick, danger, text }) {
     return (
         <button
             onClick={onClick}
-            className={`px-5 py-2 rounded-lg font-medium transition ${danger
+            className={`px-5 py-2 flex flex-row justify-center items-center gap-2 rounded-lg font-medium transition ${danger
                 ? "bg-red-600 text-white hover:bg-red-500"
                 : "bg-blue-600 text-white hover:bg-blue-500"
                 }`}
         >
-            {label}
+            {label}{text}
         </button>
     );
 }

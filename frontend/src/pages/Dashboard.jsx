@@ -164,6 +164,12 @@ export default function AttackDashboard() {
                         onClick={() => runAttack(25000)}
                     />
                     <ControlButton
+                        label={<GiChoppedSkull />}
+                        text="ATTACK x100000"
+                        danger
+                        onClick={() => runAttack(100000)}
+                    />
+                    <ControlButton
                         label="🛑 STOP ATTACK"
                         danger
                         onClick={() => setAttackRunning(false)}

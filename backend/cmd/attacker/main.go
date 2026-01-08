@@ -19,6 +19,7 @@ type AttackRequest struct {
 }
 
 func main() {
+	attack.InitCircuitBreaker()
 	logs.Start()
 
 	r := chi.NewRouter()

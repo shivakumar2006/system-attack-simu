@@ -1,6 +1,7 @@
 package attack
 
 import (
+	"errors"
 	"net/http"
 	"sync"
 	"time"
@@ -14,18 +15,37 @@ func Worker(target string, jobs <-chan int, results chan<- Result, wg *sync.Wait
 	}
 
 	for range jobs {
-		resp, err := client.Get(target)
-		if err != nil {
-			results <- Result{Success: false}
-			continue
-		}
+		_, err := CB.Execute(func() (interface{}, error) {
+			resp, err := client.Get(target)
+			if err != nil {
+				return nil, err
+			}
+			defer resp.Body.Close()
 
-		if resp.StatusCode >= 500 {
+			if resp.StatusCode >= 500 {
+				return nil, errors.New("vixtim failed")
+			}
+
+			return nil, nil
+		})
+
+		if err != nil {
 			results <- Result{Success: false}
 		} else {
 			results <- Result{Success: true}
 		}
+		// resp, err := client.Get(target)
+		// if err != nil {
+		// 	results <- Result{Success: false}
+		// 	continue
+		// }
 
-		resp.Body.Close()
+		// if resp.StatusCode >= 500 {
+		// 	results <- Result{Success: false}
+		// } else {
+		// 	results <- Result{Success: true}
+		// }
+
+		// resp.Body.Close()
 	}
 }

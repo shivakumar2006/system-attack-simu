@@ -1,6 +1,7 @@
 package attack
 
 import (
+	"log"
 	"time"
 
 	"github.com/sony/gobreaker"
@@ -9,6 +10,8 @@ import (
 var CB *gobreaker.CircuitBreaker
 
 func InitCircuitBreaker() {
+	log.Println("Circuit Breaker is initiated")
+
 	settings := gobreaker.Settings{
 		Name:        "victim-service",
 		MaxRequests: 5,                // when circuit opens then it will only allow 5 requests and after that it's open fully

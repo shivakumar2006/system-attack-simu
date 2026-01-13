@@ -20,6 +20,7 @@ type AttackRequest struct {
 
 func main() {
 	attack.InitCircuitBreaker()
+	attack.InitRateLimiter(100) // 100 req/sec
 	logs.Start()
 
 	r := chi.NewRouter()

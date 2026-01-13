@@ -15,6 +15,11 @@ func Worker(target string, jobs <-chan int, results chan<- Result, wg *sync.Wait
 	}
 
 	for range jobs {
+
+		// rate limiter
+		RateLimiter.Allow()
+
+		// circuit breaker
 		_, err := CB.Execute(func() (interface{}, error) {
 			resp, err := client.Get(target)
 			if err != nil {
